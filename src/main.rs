@@ -1,5 +1,7 @@
+use chrono::Datelike;
 use db::{Db, State};
 use dioxus::{desktop::LogicalSize, prelude::*};
+use dioxus_free_icons::Icon;
 use futures_util::StreamExt;
 use itertools::Itertools;
 use prelude::*;
@@ -154,8 +156,38 @@ fn Home() -> Element {
 
 #[component]
 fn Day(day: types::Day) -> Element {
-    let human_date = |date: DateTime| date.format("%Y %m %d").to_string();
-    let cmd = use_coroutine_handle::<RitualCmd>();
+    let human_date = |date: DateTime| {
+        // dth of month, year
+        let month = date.month();
+        let day = date.day();
+        let year = date.year();
+        let quantifier = if day == 1 {
+            "st"
+        } else if day == 2 {
+            "nd"
+        } else if day == 3 {
+            "rd"
+        } else {
+            "th"
+        };
+        let month_str = match month {
+            1 => "January",
+            2 => "February",
+            3 => "March",
+            4 => "April",
+            5 => "May",
+            6 => "June",
+            7 => "July",
+            8 => "August",
+            9 => "September",
+            10 => "October",
+            11 => "November",
+            12 => "December",
+            _ => unreachable!(),
+        };
+
+        format!("{day}{quantifier} of {month_str}, {year}")
+    };
     rsx! {
         div {
             class: "day",
@@ -177,9 +209,23 @@ fn Day(day: types::Day) -> Element {
 #[component]
 fn NewHabitForm(day_id: Uuid) -> Element {
     let cmd = use_coroutine_handle::<RitualCmd>();
-    let mut title = use_signal(|| String::new());
+    let mut title = use_signal(String::new);
 
-    rsx! {
+    let mut show_form = use_signal(|| false);
+
+    let new_day_button = rsx! {
+        button {
+            class: "new-habit",
+            onclick: move |_| { show_form.set(true) },
+            Icon {
+                width: 16,
+                height: 16,
+                icon: dioxus_free_icons::icons::io_icons::IoAddOutline,
+            }
+        }
+    };
+
+    let new_day_form = rsx! {
         form {
             class: "new-habit-form",
             onsubmit: move |e| {
@@ -196,8 +242,29 @@ fn NewHabitForm(day_id: Uuid) -> Element {
                 value: "{title}",
                 oninput: move |e| title.set(e.data.value())
             }
-            button { r#type: "submit", "Add" }
+            button { class: "submit", r#type: "submit",
+                Icon {
+                    width: 16,
+                    height: 16,
+                    icon: dioxus_free_icons::icons::io_icons::IoCheckmarkOutline,
+                }
+            }
         }
+        button {
+            class: "cancel",
+            onclick: move |_| { show_form.set(false) },
+            Icon  {
+                width: 16,
+                height: 16,
+                icon: dioxus_free_icons::icons::io_icons::IoCloseOutline,
+            }
+        }
+    };
+
+    if show_form() {
+        new_day_form
+    } else {
+        new_day_button
     }
 }
 
