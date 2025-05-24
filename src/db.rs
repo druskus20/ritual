@@ -4,6 +4,7 @@ use uuid::Uuid;
 
 use crate::prelude::*;
 use crate::types::{DateTime, Day, Habit, HabitRef};
+use crate::utils::HashmapExt;
 use std::collections::HashMap;
 use std::path::PathBuf;
 
@@ -60,9 +61,11 @@ impl Db {
 impl State {
     pub fn add_day(&mut self, date: DateTime) -> Result<()> {
         let day = Day::new(date);
-        self.days
-            .insert(day.id, day)
-            .ok_or_else(|| eyre::eyre!("Failed to add day with date: {}", date))?;
+        let day_id = day.id;
+        if self.days.contains_key(&day_id) {
+            return Err(eyre::eyre!("Day with id {} already exists", day.id));
+        }
+        self.days.fallible_insert(day_id, day)?;
         Ok(())
     }
 
@@ -75,15 +78,18 @@ impl State {
             id: Uuid::new_v4(),
             name: "New Habit".to_string(),
         };
-        day.habits.insert(
+        if self.habits.contains_key(&habit.id) {
+            return Err(eyre::eyre!("Habit with id {} already exists", habit.id));
+        }
+        day.habits.fallible_insert(
             habit.id,
             HabitRef {
                 id: habit.id,
                 name: habit.name.clone(),
                 done: false,
             },
-        );
-        self.habits.insert(habit.id, habit);
+        )?;
+        self.habits.fallible_insert(habit.id, habit)?;
         Ok(())
     }
 

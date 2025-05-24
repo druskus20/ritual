@@ -1,5 +1,5 @@
 use db::{Db, State};
-use dioxus::{desktop::LogicalSize, html::u::white_space, prelude::*};
+use dioxus::{desktop::LogicalSize, prelude::*};
 use futures_util::StreamExt;
 use itertools::Itertools;
 use prelude::*;
@@ -9,6 +9,7 @@ use uuid::Uuid;
 mod cli;
 mod db;
 mod types;
+mod utils;
 
 #[allow(unused_imports)]
 pub(crate) mod prelude {
@@ -148,7 +149,10 @@ fn Day(day: types::Day) -> Element {
     rsx! {
         div {
             class: "day",
-            span { "{human_date(day.date)}" }
+            span {
+                class: "date",
+                "{human_date(day.date)}"
+            }
             div {
                 class: "habits",
                 for habit in day.habits.values() {
@@ -172,7 +176,10 @@ fn Habit(day_id: Uuid, habit: types::HabitRef) -> Element {
     rsx! {
         div {
             class: "habit",
-            div { span {  "{habit.name}" } }
+            div { span {
+                class: "name",
+                "{habit.name}" }
+            }
             input {
                 r#type: "checkbox",
                 checked: habit.done,
