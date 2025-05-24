@@ -1,7 +1,8 @@
 use chrono::Datelike;
+use components::icon::Icon;
 use db::{Db, State};
 use dioxus::{desktop::LogicalSize, prelude::*};
-use dioxus_free_icons::Icon;
+use dioxus_free_icons::icons::io_icons::{IoAddOutline, IoCheckmarkOutline, IoCloseOutline};
 use futures_util::StreamExt;
 use itertools::Itertools;
 use prelude::*;
@@ -10,6 +11,7 @@ use utils::{NonEmpty, Validate};
 use uuid::Uuid;
 
 mod cli;
+mod components;
 mod db;
 mod types;
 mod utils;
@@ -218,9 +220,7 @@ fn NewHabitForm(day_id: Uuid) -> Element {
             class: "new-habit",
             onclick: move |_| { show_form.set(true) },
             Icon {
-                width: 16,
-                height: 16,
-                icon: dioxus_free_icons::icons::io_icons::IoAddOutline,
+                icon: IoAddOutline,
             }
         }
     };
@@ -244,9 +244,7 @@ fn NewHabitForm(day_id: Uuid) -> Element {
             }
             button { class: "submit", r#type: "submit",
                 Icon {
-                    width: 16,
-                    height: 16,
-                    icon: dioxus_free_icons::icons::io_icons::IoCheckmarkOutline,
+                    icon: IoCheckmarkOutline,
                 }
             }
         }
@@ -254,9 +252,7 @@ fn NewHabitForm(day_id: Uuid) -> Element {
             class: "cancel",
             onclick: move |_| { show_form.set(false) },
             Icon  {
-                width: 16,
-                height: 16,
-                icon: dioxus_free_icons::icons::io_icons::IoCloseOutline,
+                icon: IoCloseOutline,
             }
         }
     };

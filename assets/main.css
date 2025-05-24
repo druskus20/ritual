@@ -1,15 +1,39 @@
 :root {
-  --background: #fff;
-  --text-color: #000;
-  --red: #ff6b6b;
-  --blue: #4a90e2;
-  --green: #50e3c2;
-  --yellow: #f8e71c;
-  --purple: #9013fe;
-  --orange: #f5a623;
+  /* Background and Text */
+  --background: #fbf1c7;
+  --text-color: #3c3836;
+  --subtext1: #504945;
+  --subtext0: #665c54;
+  --overlay2: #7c6f64;
+  --overlay1: #928374;
+  --overlay0: #a89984;
+  --surface2: #d5c4a1;
+  --surface1: #ebdbb2;
+  --surface0: #f2e5bc;
+  --mantle: #e9dbb1;
+  --crust: #e0cfa0;
+
+  /* Core Colors */
+  --red: #b83229;
+  --flamingo: #9d2b22;
+  --maroon: #9a3a34;
+  --pink: #8f3f71;
+  --mauve: #8f3f71;
+  --orange: #d65d0e;
+  --peach: #d65d0e;
+  --yellow: #b57e22;
+  --green: #7c7b20;
+  --greener: #b8bb26;
+  --teal: #4a8568;
+  --sky: #427b58;
+  --sapphire: #076678;
+  --blue: #1a7088;
+  --lavender: #427b58;
+  --rosewater: #af3a03;
+
+  /* Primary Colors */
   --primary-color: var(--green);
   --primary-color-highlighted: var(--red);
-
 }
 
 body {
@@ -59,11 +83,13 @@ button {
 }
 
 .main {
-
   .days {
     .day {
-      .date {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
 
+      .date {
         padding: 0 0.7em;
       }
 
@@ -79,6 +105,7 @@ button {
           flex-direction: column;
           align-items: center;
           padding: 0 0.7em;
+          min-width: 6em;
         }
       }
 
