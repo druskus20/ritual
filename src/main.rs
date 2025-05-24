@@ -4,6 +4,7 @@ use futures_util::StreamExt;
 use itertools::Itertools;
 use prelude::*;
 use types::DateTime;
+use utils::{NonEmpty, Validate};
 use uuid::Uuid;
 
 mod cli;
@@ -69,10 +70,19 @@ fn App() -> Element {
                         });
                     });
                 }
-                RitualCmd::AddHabitToDay { day_id } => {
+                RitualCmd::AddHabitToDay { title, day_id } => {
                     info!("Adding habit to day: {}", day_id);
+                    let title = NonEmpty::new_validated(title);
+                    let title = match title {
+                        Ok(title) => title,
+                        Err(e) => {
+                            error!("Invalid habit title {e}");
+                            continue;
+                        }
+                    };
+
                     db_state.with_mut(|state| {
-                        state.add_habit_to_day(day_id).unwrap_or_else(|err| {
+                        state.add_habit_to_day(title, day_id).unwrap_or_else(|err| {
                             error!("Failed to add habit to day {}: {}", day_id, err);
                         });
                     });
@@ -159,13 +169,34 @@ fn Day(day: types::Day) -> Element {
                     Habit { day_id: day.id, habit: habit.clone() }
                 }
             }
-            // Add habit button
-            button {
-                onclick: move |_| {
-                    cmd.send(RitualCmd::AddHabitToDay { day_id: day.id });
-                },
-                "Add Habit"
+            NewHabitForm { day_id: day.id }
+        }
+    }
+}
+
+#[component]
+fn NewHabitForm(day_id: Uuid) -> Element {
+    let cmd = use_coroutine_handle::<RitualCmd>();
+    let mut title = use_signal(|| String::new());
+
+    rsx! {
+        form {
+            class: "new-habit-form",
+            onsubmit: move |e| {
+                e.prevent_default();
+                cmd.send(RitualCmd::AddHabitToDay {
+                    title: title.read().clone(),
+                    day_id,
+                });
+                title.set(String::new());
+            },
+            input {
+                r#type: "text",
+                placeholder: "New Habit",
+                value: "{title}",
+                oninput: move |e| title.set(e.data.value())
             }
+            button { r#type: "submit", "Add" }
         }
     }
 }
@@ -198,6 +229,7 @@ fn Habit(day_id: Uuid, habit: types::HabitRef) -> Element {
 pub enum RitualCmd {
     NewDay,
     AddHabitToDay {
+        title: String,
         day_id: Uuid,
     },
     HabitSetDone {

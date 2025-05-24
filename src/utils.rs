@@ -51,3 +51,62 @@ impl<K, V> HashmapExt<K, V> for indexmap::IndexMap<K, V> {
         Ok(self.entry(key).or_insert(value))
     }
 }
+
+pub enum ValidationError {
+    InvalidValue,
+}
+
+impl Display for ValidationError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ValidationError::InvalidValue => write!(f, "Invalid value provided"),
+        }
+    }
+}
+impl std::fmt::Debug for ValidationError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "ValidationError: {self}")
+    }
+}
+impl Error for ValidationError {}
+
+pub struct NonEmpty<T>(T);
+
+pub trait Validate
+where
+    Self: Sized,
+{
+    type Target;
+    fn new_validated(t: Self::Target) -> Result<Self, ValidationError>;
+    fn inner(self) -> Self::Target;
+}
+
+impl Validate for NonEmpty<String> {
+    type Target = String;
+    fn new_validated(t: Self::Target) -> Result<Self, ValidationError> {
+        if t == "" {
+            Err(ValidationError::InvalidValue)
+        } else {
+            Ok(NonEmpty(t))
+        }
+    }
+    fn inner(self) -> String {
+        self.0
+    }
+}
+
+pub struct NonZero<T>(T);
+
+impl Validate for NonZero<u32> {
+    type Target = u32;
+    fn new_validated(t: Self::Target) -> Result<Self, ValidationError> {
+        if t == 0 {
+            Err(ValidationError::InvalidValue)
+        } else {
+            Ok(NonZero(t))
+        }
+    }
+    fn inner(self) -> u32 {
+        self.0
+    }
+}

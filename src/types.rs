@@ -25,7 +25,7 @@ impl Day {
 #[derive(Debug, Clone, Serialize, Deserialize, Eq)]
 pub struct Habit {
     pub id: Uuid,
-    pub name: String,
+    pub title: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq)]

@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 use crate::prelude::*;
 use crate::types::{DateTime, Day, Habit, HabitRef};
-use crate::utils::HashmapExt;
+use crate::utils::{HashmapExt, NonEmpty, Validate};
 use std::collections::HashMap;
 use std::path::PathBuf;
 
@@ -69,14 +69,14 @@ impl State {
         Ok(())
     }
 
-    pub fn add_habit_to_day(&mut self, day_id: Uuid) -> Result<()> {
+    pub fn add_habit_to_day(&mut self, title: NonEmpty<String>, day_id: Uuid) -> Result<()> {
         let day = self
             .days
             .get_mut(&day_id)
             .ok_or_else(|| eyre::eyre!("Day not found"))?;
         let habit = Habit {
             id: Uuid::new_v4(),
-            name: "New Habit".to_string(),
+            title: title.inner(),
         };
         if self.habits.contains_key(&habit.id) {
             return Err(eyre::eyre!("Habit with id {} already exists", habit.id));
@@ -85,7 +85,7 @@ impl State {
             habit.id,
             HabitRef {
                 id: habit.id,
-                name: habit.name.clone(),
+                name: habit.title.clone(),
                 done: false,
             },
         )?;
