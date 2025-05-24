@@ -1,14 +1,15 @@
+use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use uuid::Uuid;
 
 pub type DateTime = chrono::DateTime<chrono::Utc>;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Day {
     pub id: Uuid,
     pub date: DateTime,
-    pub habits: HashSet<HabitRef>,
+    pub habits: IndexMap<Uuid, HabitRef>,
 }
 
 impl Day {
@@ -16,7 +17,7 @@ impl Day {
         Self {
             id: Uuid::new_v4(),
             date,
-            habits: HashSet::new(),
+            habits: Default::default(),
         }
     }
 }

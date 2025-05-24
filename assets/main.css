@@ -1,72 +1,18 @@
-/* App-wide styling */
+:root {
+  --background: #fff;
+  --text-color: #000;
+  --primary-color: #1e1e2f;
+  --secondary-color: #2c2c3e;
+
+}
+
 body {
-    background-color: #0f1116;
-    color: #ffffff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 20px;
+  background-color: var(--background);
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif;
+  margin: 1em;
 }
 
-#hero {
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.man {
+  .day-list {}
 }
-
-#links {
-    width: 400px;
-    text-align: left;
-    font-size: x-large;
-    color: white;
-    display: flex;
-    flex-direction: column;
-}
-
-#links a {
-    color: white;
-    text-decoration: none;
-    margin-top: 20px;
-    margin: 10px 0px;
-    border: white 1px solid;
-    border-radius: 5px;
-    padding: 10px;
-}
-
-#links a:hover {
-    background-color: #1f1f1f;
-    cursor: pointer;
-}
-
-#header {
-    max-width: 1200px;
-}
-
-/* Navbar */
-#navbar {
-    display: flex;
-    flex-direction: row;
-  }
-  
-#navbar a {
-    color: #ffffff;
-    margin-right: 20px;
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-#navbar a:hover {
-    cursor: pointer;
-    color: #91a4d2;
-}
-
-/* Blog page */
-#blog {
-    margin-top: 50px;
-  }
-  
-#blog a {
-    color: #ffffff;
-    margin-top: 50px;
-}
-
