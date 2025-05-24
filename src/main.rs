@@ -23,6 +23,8 @@ enum Route {
     Home {},
 }
 
+const NORMALIZE_CSS: Asset = asset!("/assets/normalize.css");
+const REMOVE_DEFAULT_STYLES_CSS: Asset = asset!("/assets/remove_default_styles.css");
 const MAIN_CSS: Asset = asset!("/assets/main.css");
 
 fn main() {
@@ -102,6 +104,8 @@ fn App() -> Element {
     });
 
     rsx! {
+        document::Link { rel: "stylesheet", href: NORMALIZE_CSS }
+        document::Link { rel: "stylesheet", href: REMOVE_DEFAULT_STYLES_CSS }
         document::Link { rel: "stylesheet", href: MAIN_CSS }
         Router::<Route> {}
     }
@@ -110,40 +114,28 @@ fn App() -> Element {
 #[component]
 fn Home() -> Element {
     let cmd = use_coroutine_handle::<RitualCmd>();
+    let state = use_context::<Signal<State>>();
     rsx! {
         div {
             class: "main",
-            h1 { "Ritual" }
+            h1 { "Ritual" },
             div {
                 class: "days",
-                "days"
-                Days {}
-            }
-            button {
-                onclick: move |_| {
-                    cmd.send(RitualCmd::NewDay);
-            },
-                "Add Day"
+                for day in state.read().days.values().sorted_by_key(|d| d.date) {
+                    Day { day: day.clone() }
+                }
+                button {
+                    onclick: move |_| {
+                        cmd.send(RitualCmd::NewDay);
+                },
+                    "Add Day"
+                }
             }
             button {
                 onclick: move |_| {
                     cmd.send(RitualCmd::Save);
                 },
                 "Save"
-            }
-        }
-    }
-}
-
-#[component]
-fn Days() -> Element {
-    let state = use_context::<Signal<State>>();
-
-    rsx! {
-        div {
-            class: "days",
-            for day in state.read().days.values().sorted_by_key(|d| d.date) {
-                Day { day: day.clone() }
             }
         }
     }
@@ -157,18 +149,20 @@ fn Day(day: types::Day) -> Element {
         div {
             class: "day",
             span { "{human_date(day.date)}" }
-            for habit in day.habits.values() {
-                Habit { day_id: day.id, habit: habit.clone() }
+            div {
+                class: "habits",
+                for habit in day.habits.values() {
+                    Habit { day_id: day.id, habit: habit.clone() }
+                }
+            }
+            // Add habit button
+            button {
+                onclick: move |_| {
+                    cmd.send(RitualCmd::AddHabitToDay { day_id: day.id });
+                },
+                "Add Habit"
             }
         }
-        // Add habit button
-        button {
-            onclick: move |_| {
-                cmd.send(RitualCmd::AddHabitToDay { day_id: day.id });
-            },
-            "Add Habit"
-        }
-
     }
 }
 
@@ -178,7 +172,7 @@ fn Habit(day_id: Uuid, habit: types::HabitRef) -> Element {
     rsx! {
         div {
             class: "habit",
-            span { "{habit.name}" }
+            div { span {  "{habit.name}" } }
             input {
                 r#type: "checkbox",
                 checked: habit.done,

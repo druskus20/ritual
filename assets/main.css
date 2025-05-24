@@ -13,6 +13,27 @@ body {
   margin: 1em;
 }
 
-.man {
-  .day-list {}
+button {
+  cursor: pointer;
+}
+
+.main {
+  .days {
+    .day {
+      display: flex;
+      flex-direction: row;
+
+      .habits {
+        display: flex;
+        align-items: start;
+
+        .habit {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+        }
+      }
+    }
+  }
 }
