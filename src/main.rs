@@ -235,6 +235,7 @@ fn NewHabitForm(day_id: Uuid) -> Element {
                     day_id,
                 });
                 title.set(String::new());
+                show_form.set(false);
             },
             input {
                 r#type: "text",
