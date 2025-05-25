@@ -152,27 +152,30 @@ fn Home() -> Element {
                 },
                 "Save"
             }
+            components::emoji_picker::EmojiPicker {
+                on_select: move |_| {
+                        todo!()
+                }
+            }
         }
     }
 }
 
-#[component]
-fn Day(day: types::Day) -> Element {
-    let human_date = |date: DateTime| {
-        // dth of month, year
-        let month = date.month();
-        let day = date.day();
-        let year = date.year();
-        let quantifier = if day == 1 {
-            "st"
-        } else if day == 2 {
-            "nd"
-        } else if day == 3 {
-            "rd"
-        } else {
-            "th"
-        };
-        let month_str = match month {
+use chrono::Utc;
+fn fmt_nice_date(date: DateTime) -> String {
+    fn get_day_suffix(day: u32) -> &'static str {
+        match day {
+            11 | 12 | 13 => "th",
+            _ => match day % 10 {
+                1 => "st",
+                2 => "nd",
+                3 => "rd",
+                _ => "th",
+            },
+        }
+    }
+    fn get_month_name(month: u32) -> &'static str {
+        match month {
             1 => "January",
             2 => "February",
             3 => "March",
@@ -185,17 +188,39 @@ fn Day(day: types::Day) -> Element {
             10 => "October",
             11 => "November",
             12 => "December",
-            _ => unreachable!(),
-        };
+            _ => "",
+        }
+    }
+    let today = Utc::now().date_naive();
+    let input_date = date.date_naive();
+    let duration = today.signed_duration_since(input_date);
 
-        format!("{day}{quantifier} of {month_str}, {year}")
-    };
+    if duration.num_days() == 0 {
+        "Today".to_string()
+    } else if duration.num_days() == 1 {
+        "Yesterday".to_string()
+    } else if duration.num_days() < 7 && date.weekday() == today.weekday().pred() {
+        format!("{}", date.weekday())
+    } else if date.month() == today.month() && date.year() == today.year() {
+        format!("{}{}", date.day(), get_day_suffix(date.day()))
+    } else {
+        format!(
+            "{} of {}, {}",
+            date.day(),
+            get_month_name(date.month()),
+            date.year()
+        )
+    }
+}
+
+#[component]
+fn Day(day: types::Day) -> Element {
     rsx! {
         div {
             class: "day",
             span {
                 class: "date",
-                "{human_date(day.date)}"
+                "{fmt_nice_date(day.date)}"
             }
             div {
                 class: "habits",
