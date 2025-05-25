@@ -1,5 +1,5 @@
 use chrono::Datelike;
-use components::icon::Icon;
+use components::{button::Button, icon::Icon};
 use db::{Db, State};
 use dioxus::{desktop::LogicalSize, prelude::*};
 use dioxus_free_icons::icons::io_icons::{IoAddOutline, IoCheckmarkOutline, IoCloseOutline};
@@ -139,14 +139,14 @@ fn Home() -> Element {
                 for day in state.read().days.values().sorted_by_key(|d| d.date) {
                     Day { day: day.clone() }
                 }
-                button {
+                Button {
                     onclick: move |_| {
                         cmd.send(RitualCmd::NewDay);
                 },
                     "Add Day"
                 }
             }
-            button {
+            Button {
                 onclick: move |_| {
                     cmd.send(RitualCmd::Save);
                 },
@@ -218,7 +218,7 @@ fn Day(day: types::Day) -> Element {
     rsx! {
         div {
             class: "day",
-            span {
+            h3 {
                 class: "date",
                 "{fmt_nice_date(day.date)}"
             }
@@ -241,7 +241,7 @@ fn NewHabitForm(day_id: Uuid) -> Element {
     let mut show_form = use_signal(|| false);
 
     let new_day_button = rsx! {
-        button {
+        Button {
             class: "new-habit",
             onclick: move |_| { show_form.set(true) },
             Icon {
@@ -268,13 +268,13 @@ fn NewHabitForm(day_id: Uuid) -> Element {
                 value: "{title}",
                 oninput: move |e| title.set(e.data.value())
             }
-            button { class: "submit", r#type: "submit",
+            Button { class: "submit", r#type: "submit",
                 Icon {
                     icon: IoCheckmarkOutline,
                 }
             }
         }
-        button {
+        Button {
             class: "cancel",
             onclick: move |_| { show_form.set(false) },
             Icon  {

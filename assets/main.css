@@ -32,8 +32,9 @@
   --rosewater: #af3a03;
 
   /* Primary Colors */
-  --primary-color: var(--green);
-  --primary-color-highlighted: var(--red);
+  --primary-color: var(--pink);
+  --primary-color-highlighted: var(--rosewater);
+  --primary-color-clicked: var(--flamingo);
 }
 
 body {
@@ -63,7 +64,7 @@ input[type="checkbox"]:checked {
 }
 
 /* buttons */
-button {
+.default-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -77,6 +78,10 @@ button {
 
   &:hover {
     background-color: var(--primary-color-highlighted);
+  }
+
+  &:active {
+    background-color: var(--primary-color-clicked);
   }
 }
 
@@ -133,6 +138,7 @@ button {
     font-size: 1.5em;
     margin: 0.1em;
     background-color: unset;
+    border: none;
 
     &:hover {
       background-color: var(--primary-color);
