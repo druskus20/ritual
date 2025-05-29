@@ -68,13 +68,13 @@ input[type="checkbox"]:checked {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--primary-color);
-  color: var(--background);
-  border: none;
-  padding: 0.2em 0.2em;
   border-radius: 0.25em;
   margin: 0.5em 0;
   font-size: 1em;
+  background-color: var(--primary-color);
+  color: var(--background);
+  border: none;
+
 
   &:hover {
     background-color: var(--primary-color-highlighted);
@@ -85,10 +85,20 @@ input[type="checkbox"]:checked {
   }
 }
 
+.new-habit {
+  /* Make it 100% height */
+  align-self: stretch;
+  width: 5em;
+  border: 1px solid var(--primary-color);
+  color: black;
+  border: 1px solid var(--primary-color);
+  color: black;
+  background-color: unset;
+}
+
 .main {
   .days {
     .day {
-      height: 3em;
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -103,13 +113,15 @@ input[type="checkbox"]:checked {
       .habits {
         display: flex;
         flex-wrap: wrap;
+        min-height: 5.5em;
 
         .habit {
           display: flex;
           flex-direction: column;
-          align-items: center;
-          padding: 0 0.2em;
+          justify-content: space-between;
+          gap: 0.5em;
           min-width: 6em;
+          padding: 1em;
         }
       }
 
