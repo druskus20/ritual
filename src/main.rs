@@ -1,7 +1,7 @@
 use chrono::Datelike;
 use components::{button::Button, icon::Icon};
 use db::{Db, State};
-use dioxus::{desktop::LogicalSize, prelude::*};
+use dioxus::{desktop::LogicalSize, html::button::disabled, prelude::*};
 use dioxus_free_icons::icons::io_icons::{IoAddOutline, IoCheckmarkOutline, IoCloseOutline};
 use futures_util::StreamExt;
 use itertools::Itertools;
@@ -130,16 +130,29 @@ fn App() -> Element {
 fn Home() -> Element {
     let cmd = use_coroutine_handle::<RitualCmd>();
     let state = use_context::<Signal<State>>();
+    let days = state.read().days.clone();
+    let sorted_days = days.values().sorted_by_key(|d| d.date).collect::<Vec<_>>();
+    // check if today is already present (only check date, not hours)
+    let add_days_enabled = if sorted_days
+        .last()
+        .is_none_or(|d| d.date.date_naive() != chrono::Utc::now().date_naive())
+    {
+        "enabled"
+    } else {
+        "disabled"
+    };
     rsx! {
         div {
             class: "main",
             h1 { "Ritual" },
             div {
                 class: "days",
-                for day in state.read().days.values().sorted_by_key(|d| d.date) {
+                for day in sorted_days {
                     Day { day: day.clone() }
                 }
                 Button {
+                    disabled: add_days_enabled == "disabled",
+                    class: add_days_enabled,
                     onclick: move |_| {
                         cmd.send(RitualCmd::NewDay);
                 },

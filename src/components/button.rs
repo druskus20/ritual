@@ -4,6 +4,7 @@ pub struct ButtonProps {
     class: Option<String>,
     onclick: Option<Callback<Event<MouseData>>>,
     children: Element,
+    disabled: Option<bool>,
     r#type: Option<String>,
 }
 
@@ -13,6 +14,7 @@ pub fn Button(props: ButtonProps) -> Element {
     rsx! {
         button {
             class: class,
+            disabled: props.disabled,
             onclick: props.onclick.unwrap_or_default(),
             r#type: props.r#type.unwrap_or_else(|| "button".to_string()),
             {props.children},

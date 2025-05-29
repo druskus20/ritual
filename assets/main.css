@@ -75,12 +75,17 @@ input[type="checkbox"]:checked {
   color: var(--background);
   border: none;
 
+  &.disabled {
+    background-color: var(--overlay1);
+    color: var(--subtext1);
+    cursor: not-allowed;
+  }
 
-  &:hover {
+  &.enabled:hover {
     background-color: var(--primary-color-highlighted);
   }
 
-  &:active {
+  &.enabled:active {
     background-color: var(--primary-color-clicked);
   }
 }
